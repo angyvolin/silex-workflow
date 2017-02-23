@@ -20,9 +20,9 @@ Register the service and pass workflow configuration:
 
 use Angyvolin\Provider\WorkflowServiceProvider;
 
-$app->register(new WorkflowServiceProvider(array(
+$app->register(new WorkflowServiceProvider(), array(
     'workflow.config' => $workflowConfig,
-)));
+));
 
 ```
 
