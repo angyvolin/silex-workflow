@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "silex/silex": "2.0",
+        "silex/silex": "^2.0",
         "symfony/workflow": "^3.2"
     },
     "suggest": {
