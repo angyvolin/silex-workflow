@@ -1,0 +1,23 @@
+{
+    "name": "angyvolin/silex-workflow",
+    "description": "Silex service provider for symfony/workflow component",
+    "keywords": [ "WorkflowServiceProvider", "workflow", "pimple", "silex", "silex 2" ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrii Volin",
+            "email": "angy.volin@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "2.0",
+        "symfony/workflow": "^3.2"
+    },
+    "suggest": {
+        "symfony/twig-bridge": "For using Symfony Twig helper functions"
+    },
+    "autoload": {
+        "psr-4": { "Angyvolin\\Provider\\": "src/" }
+    },
+    "minimum-stability": "dev"
+}
