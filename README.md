@@ -28,7 +28,9 @@ $app->register(new WorkflowServiceProvider(), array(
 
 ## Usage
 
-See [silex-workflow-demo](https://github.com/angyvolin/silex-workflow-demo) application.
+See [silex-workflow-demo
+![workflow](https://github.com/angyvolin/silex-workflow-demo/blob/master/web/img/workflow.png)
+](https://github.com/angyvolin/silex-workflow-demo)
 
 ## Author
 
