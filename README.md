@@ -28,7 +28,7 @@ $app->register(new WorkflowServiceProvider(), array(
 
 ## Usage
 
-See official [symfony/workflow documentation](http://symfony.com/doc/current/components/workflow.html) examples.
+See [silex-workflow-demo](https://github.com/angyvolin/silex-workflow-demo) application.
 
 ## Author
 
