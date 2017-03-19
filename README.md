@@ -1,18 +1,20 @@
-# WorkflowServiceProvider
+# WorkflowServiceProvider [![License](https://poser.pugx.org/angyvolin/silex-workflow/license)](https://packagist.org/packages/angyvolin/silex-workflow) [![Latest Stable Version](https://poser.pugx.org/angyvolin/silex-workflow/v/stable)](https://packagist.org/packages/angyvolin/silex-workflow) [![Total Downloads](https://poser.pugx.org/angyvolin/silex-workflow/downloads)](https://packagist.org/packages/angyvolin/silex-workflow)
 
-Silex service provider for [symfony/workflow](https://github.com/symfony/workflow) component.
+Silex 2.* service provider for Symfony Workflow component.
 
-This version is intended for use with Silex 2.*.
+![workflow](https://github.com/angyvolin/silex-workflow-demo/blob/master/web/img/workflow.png)
+
+## About
+The Workflow component provides tools for managing a workflow or finite state machine. [symfony/workflow](https://github.com/symfony/workflow) was introduced in Symfony 3.2.
 
 ## Installation
-
 `composer require angyvolin/silex-worflow`
 
 > To be able to use twig helpers you also require a [symfony/twig-bridge](https://github.com/symfony/twig-bridge) package:
->`composer require symfony/twig-bridge`
+> 
+> `composer require symfony/twig-bridge`
 
 ## Configuration
-
 Register the service and pass workflow configuration:
 
 ```php
@@ -27,11 +29,7 @@ $app->register(new WorkflowServiceProvider(), array(
 ```
 
 ## Usage
+See [silex-workflow-demo](https://github.com/angyvolin/silex-workflow-demo)
 
-See [silex-workflow-demo
-![workflow](https://github.com/angyvolin/silex-workflow-demo/blob/master/web/img/workflow.png)
-](https://github.com/angyvolin/silex-workflow-demo)
-
-## Author
-
-* Andrii Volin angy.volin@gmail.com
+## License
+[MIT License](LICENSE.md)
