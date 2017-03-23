@@ -1,4 +1,4 @@
-# WorkflowServiceProvider [![License](https://poser.pugx.org/angyvolin/silex-workflow/license)](https://packagist.org/packages/angyvolin/silex-workflow) [![Latest Stable Version](https://poser.pugx.org/angyvolin/silex-workflow/v/stable)](https://packagist.org/packages/angyvolin/silex-workflow) [![Total Downloads](https://poser.pugx.org/angyvolin/silex-workflow/downloads)](https://packagist.org/packages/angyvolin/silex-workflow)
+# WorkflowServiceProvider [![SensioLabsInsight](https://insight.sensiolabs.com/projects/c7b71caa-7264-4e8b-85b2-879c675bde5f/mini.png)](https://insight.sensiolabs.com/projects/c7b71caa-7264-4e8b-85b2-879c675bde5f) [![License](https://poser.pugx.org/angyvolin/silex-workflow/license)](https://packagist.org/packages/angyvolin/silex-workflow) [![Latest Stable Version](https://poser.pugx.org/angyvolin/silex-workflow/v/stable)](https://packagist.org/packages/angyvolin/silex-workflow) [![Total Downloads](https://poser.pugx.org/angyvolin/silex-workflow/downloads)](https://packagist.org/packages/angyvolin/silex-workflow)
 
 Silex 2.* service provider for Symfony Workflow component.
 
