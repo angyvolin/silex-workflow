@@ -83,58 +83,22 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
                 }
             }
 
-            $workflowId = sprintf('%s.%s', $type, $name);
-            $workflowDefinitionId = sprintf('%s.definition', $workflowId);
-            $markingStoreDefinitionId = sprintf('%s.marking_store', $workflowId);
+            $workflowId = $type.'.'.$name;
+            $definitionId = $workflowId.'.definition';
+            $markingStoreId = $workflowId.'.marking_store';
 
-            $app[$workflowDefinitionId] = function () use ($workflow, $type, $name) {
-                $transitions = [];
-
-                foreach ((array) $workflow['transitions'] as $transition) {
-                    if ($type === 'workflow') {
-                        $transitions[] = new Transition($transition['name'], $transition['from'], $transition['to']);
-                    } elseif ($type === 'state_machine') {
-                        foreach ((array) $transition['from'] as $from) {
-                            foreach ((array) $transition['to'] as $to) {
-                                $transitions[] = new Transition($transition['name'], $from, $to);
-                            }
-                        }
-                    }
-                }
-
-                $initialPlace = isset($workflow['initial_place']) ? $workflow['initial_place'] : null;
-
-                return new Definition($workflow['places'], $transitions, $initialPlace);
-            };
+            $app[$definitionId] = $this->createDefinition($workflow, $type);
 
             if ($app['debug']) {
                 $this
                     ->createValidator($type, isset($workflow['marking_store']['type']) ? $workflow['marking_store']['type'] : null)
-                    ->validate($app[$workflowDefinitionId], $name);
+                    ->validate($app[$definitionId], $name);
             }
 
-            $app[$markingStoreDefinitionId] = function (Container $app) use ($workflow) {
-                if (isset($workflow['marking_store']['type'])) {
-                    return call_user_func_array(
-                        $app['workflow.marking_store.'.$workflow['marking_store']['type']],
-                        $workflow['marking_store']['arguments']
-                    );
-                }
+            $app[$markingStoreId] = $this->createMarkingStore($workflow);
 
-                if (isset($workflow['marking_store']['service'])) {
-                    return $app[$workflow['marking_store']['service']];
-                }
-
-                return null;
-            };
-
-            $app[$workflowId] = function (Container $app) use ($name, $type, $workflowDefinitionId, $markingStoreDefinitionId) {
-                return call_user_func(
-                    $app[sprintf('%s.factory', $type)],
-                    $app[$workflowDefinitionId],
-                    $app[$markingStoreDefinitionId],
-                    $name
-                );
+            $app[$workflowId] = function (Container $app) use ($name, $type, $definitionId, $markingStoreId) {
+                return call_user_func($app[sprintf('%s.factory', $type)], $app[$definitionId], $app[$markingStoreId], $name);
             };
 
             $app->extend('workflow.registry', function (Registry $registry, Container $app) use ($workflow, $workflowId) {
@@ -145,6 +109,47 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
                 return $registry;
             });
         }
+    }
+
+    private function createDefinition(array $workflow, $type)
+    {
+        return function () use ($workflow, $type) {
+            $transitions = [];
+
+            foreach ((array) $workflow['transitions'] as $transition) {
+                if ($type === 'workflow') {
+                    $transitions[] = new Transition($transition['name'], $transition['from'], $transition['to']);
+                } elseif ($type === 'state_machine') {
+                    foreach ((array) $transition['from'] as $from) {
+                        foreach ((array) $transition['to'] as $to) {
+                            $transitions[] = new Transition($transition['name'], $from, $to);
+                        }
+                    }
+                }
+            }
+
+            $initialPlace = isset($workflow['initial_place']) ? $workflow['initial_place'] : null;
+
+            return new Definition($workflow['places'], $transitions, $initialPlace);
+        };
+    }
+
+    private function createMarkingStore(array $workflow)
+    {
+        return function (Container $app) use ($workflow) {
+            if (isset($workflow['marking_store']['type'])) {
+                return call_user_func_array(
+                    $app['workflow.marking_store.'.$workflow['marking_store']['type']],
+                    $workflow['marking_store']['arguments']
+                );
+            }
+
+            if (isset($workflow['marking_store']['service'])) {
+                return $app[$workflow['marking_store']['service']];
+            }
+
+            return null;
+        };
     }
 
     /**
