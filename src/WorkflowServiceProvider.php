@@ -24,10 +24,10 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
     public function register(Container $app)
     {
         $app['workflow.factory'] = $app->protect(function ($definition, $markingStoreDefinition = null, $name) use ($app) {
-            return new Workflow($definition, null, $app['dispatcher'], $name);
+            return new Workflow($definition, $markingStoreDefinition, $app['dispatcher'], $name);
         });
 
-        $app['state_machine.factory'] = $app->protect(function ($definition, $markingStoreDefinition, $name) use ($app) {
+        $app['state_machine.factory'] = $app->protect(function ($definition, $markingStoreDefinition = null, $name) use ($app) {
             return new StateMachine($definition, $markingStoreDefinition, $app['dispatcher'], $name);
         });
 
