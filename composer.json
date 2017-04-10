@@ -19,5 +19,9 @@
     "autoload": {
         "psr-4": { "Angyvolin\\Provider\\": "src/" }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^5.0",
+        "symfony/twig-bridge": "^3.2"
+    }
 }
