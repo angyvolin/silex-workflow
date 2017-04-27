@@ -21,6 +21,9 @@ use Symfony\Component\Workflow\Workflow;
 
 class WorkflowServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function register(Container $app)
     {
         $app['workflow.factory'] = $app->protect(function ($definition, $markingStoreDefinition = null, $name) use ($app) {
@@ -50,6 +53,9 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
         $app['workflow.config'] = [];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function boot(Application $app)
     {
         $this->registerWorkflowConfiguration($app);
@@ -63,6 +69,9 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
         }
     }
 
+    /**
+     * @param Container $app
+     */
     private function registerWorkflowConfiguration(Container $app)
     {
         if (!$workflows = $app['workflow.config']) {
@@ -111,15 +120,21 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
         }
     }
 
+    /**
+     * @param array $workflow
+     * @param string $type
+     *
+     * @return \Closure
+     */
     private function createDefinition(array $workflow, $type)
     {
         return function () use ($workflow, $type) {
             $transitions = [];
 
             foreach ((array) $workflow['transitions'] as $transition) {
-                if ($type === 'workflow') {
+                if ('workflow' === $type) {
                     $transitions[] = new Transition($transition['name'], $transition['from'], $transition['to']);
-                } elseif ($type === 'state_machine') {
+                } elseif ('state_machine' === $type) {
                     foreach ((array) $transition['from'] as $from) {
                         foreach ((array) $transition['to'] as $to) {
                             $transitions[] = new Transition($transition['name'], $from, $to);
@@ -134,6 +149,11 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
         };
     }
 
+    /**
+     * @param array $workflow
+     *
+     * @return \Closure
+     */
     private function createMarkingStore(array $workflow)
     {
         return function (Container $app) use ($workflow) {

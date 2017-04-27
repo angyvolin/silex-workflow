@@ -56,6 +56,7 @@ class WorkflowServiceProviderTest extends TestCase
         $this->assertInstanceOf(Workflow::class, $app['workflow.flow']);
         $this->assertInstanceOf(Definition::class, $app['workflow.flow.definition']);
         $this->assertInstanceOf(SingleStateMarkingStore::class, $app['workflow.flow.marking_store']);
+        $this->assertInstanceOf(Registry::class, $app['workflow.registry']);
     }
 
     public function testRegisterMultipleStateStateMachine()
@@ -72,6 +73,7 @@ class WorkflowServiceProviderTest extends TestCase
         $this->assertInstanceOf(StateMachine::class, $app['state_machine.stm']);
         $this->assertInstanceOf(Definition::class, $app['state_machine.stm.definition']);
         $this->assertInstanceOf(MultipleStateMarkingStore::class, $app['state_machine.stm.marking_store']);
+        $this->assertInstanceOf(Registry::class, $app['workflow.registry']);
     }
 
     private function createApplication()
