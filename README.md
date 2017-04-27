@@ -2,7 +2,7 @@
 
 Silex 2.* service provider for Symfony Workflow component.
 
-![workflow](https://github.com/angyvolin/silex-workflow-demo/blob/master/web/img/workflow.png)
+[![silex-workflow-image](https://github.com/angyvolin/silex-workflow-demo/blob/master/web/img/workflow.png)](https://github.com/angyvolin/silex-workflow-demo)
 
 ## About
 The Workflow component provides tools for managing a workflow or finite state machine. [symfony/workflow](https://github.com/symfony/workflow) was introduced in Symfony 3.2.
