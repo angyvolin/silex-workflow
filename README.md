@@ -31,5 +31,10 @@ $app->register(new WorkflowServiceProvider(), array(
 ## Usage
 See [silex-workflow-demo](https://github.com/angyvolin/silex-workflow-demo)
 
+## Tests
+
+    composer install
+    phpunit
+
 ## License
 [MIT License](LICENSE.md)
