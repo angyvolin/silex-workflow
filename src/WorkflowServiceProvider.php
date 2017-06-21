@@ -50,6 +50,14 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
             return new Registry();
         };
 
+        if (isset($app['twig']) && class_exists('Symfony\Bridge\Twig\Extension\WorkflowExtension')) {
+            $app->extend('twig', function (\Twig_Environment $twig, Container $app) {
+                $twig->addExtension(new WorkflowExtension($app['workflow.registry']));
+
+                return $twig;
+            });
+        }
+
         $app['workflow.config'] = [];
     }
 
@@ -59,14 +67,6 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
     public function boot(Application $app)
     {
         $this->registerWorkflowConfiguration($app);
-
-        if (class_exists('Symfony\Bridge\Twig\Extension\WorkflowExtension')) {
-            $app->extend('twig', function (\Twig_Environment $twig, Container $app) {
-                $twig->addExtension(new WorkflowExtension($app['workflow.registry']));
-
-                return $twig;
-            });
-        }
     }
 
     /**

@@ -33,13 +33,19 @@ class WorkflowServiceProviderTest extends TestCase
         $this->assertInstanceOf(StateMachine::class, $app['state_machine.factory']($definition, null, 'test_state_machine'));
     }
 
-    public function testAddTwigExtensionOnApplicationBoot()
+    public function testRegisterWithTwigExtension()
     {
         $app = $this->createApplication();
         $app->register(new WorkflowServiceProvider());
-        $app->boot();
 
-        $this->assertInstanceOf(WorkflowExtension::class,  $app['twig']->getExtension('workflow'));
+        $this->assertInstanceOf(WorkflowExtension::class, $app['twig']->getExtension('workflow'));
+    }
+
+    public function testRegisterWithoutTwigExtension()
+    {
+        $app = new Application();
+
+        $app->register(new WorkflowServiceProvider());
     }
 
     public function testRegisterSingleStateWorkflow()
