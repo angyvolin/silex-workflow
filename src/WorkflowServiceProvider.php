@@ -4,7 +4,6 @@ namespace Angyvolin\Provider;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Silex\Api\BootableProviderInterface;
 use Silex\Application;
 use Symfony\Bridge\Twig\Extension\WorkflowExtension;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -19,7 +18,7 @@ use Symfony\Component\Workflow\Validator\StateMachineValidator;
 use Symfony\Component\Workflow\Validator\WorkflowValidator;
 use Symfony\Component\Workflow\Workflow;
 
-class WorkflowServiceProvider implements ServiceProviderInterface, BootableProviderInterface
+class WorkflowServiceProvider implements ServiceProviderInterface
 {
     /**
      * {@inheritdoc}
@@ -50,75 +49,57 @@ class WorkflowServiceProvider implements ServiceProviderInterface, BootableProvi
             return new Registry();
         };
 
-        $app['workflow.config'] = [];
+ 		$app['workflow.registry'] = function ($app) {
+			$needle = new Registry();
+
+			foreach ($app['workflow.config'] as $name => $workflow) {
+				$type = $workflow['type'];
+
+				if (!isset($workflow['transitions'][0])) {
+					foreach ((array)$workflow['transitions'] as $workflowName => $transition) {
+						if (array_key_exists('name', $transition)) {
+							continue;
+						}
+
+						$transition['name'] = $workflowName;
+						$workflow['transitions'][$workflowName] = $transition;
+					}
+				}
+
+				$workflowId = $type . '.' . $name;
+				$definitionId = $workflowId . '.definition';
+				$markingStoreId = $workflowId . '.marking_store';
+
+				$app[$definitionId] = $this->createDefinition($workflow, $type);
+
+				if ($app['debug']) {
+					$this
+						->createValidator($type, isset($workflow['marking_store']['type']) ? $workflow['marking_store']['type'] : null)
+						->validate($app[$definitionId], $name);
+				}
+
+				$app[$markingStoreId] = $this->createMarkingStore($workflow);
+
+				$app[$workflowId] = function (Container $app) use ($name, $type, $definitionId, $markingStoreId) {
+					return call_user_func($app[sprintf('%s.factory', $type)], $app[$definitionId], $app[$markingStoreId], $name);
+				};
+
+				foreach ($workflow['supports'] as $supportedClass) {
+					$needle->add($app[$workflowId], $supportedClass);
+				}
+
+			}
+			return $needle;
+		};
+
+		//add symfony twig extension
+		$app->extend('twig', function ($twig, $app) {
+			$twig->addExtension(new WorkflowExtension($app['workflow.registry']));
+			return $twig;
+		});
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function boot(Application $app)
-    {
-        $this->registerWorkflowConfiguration($app);
 
-        if (class_exists('Symfony\Bridge\Twig\Extension\WorkflowExtension')) {
-            $app->extend('twig', function (\Twig_Environment $twig, Container $app) {
-                $twig->addExtension(new WorkflowExtension($app['workflow.registry']));
-
-                return $twig;
-            });
-        }
-    }
-
-    /**
-     * @param Container $app
-     */
-    private function registerWorkflowConfiguration(Container $app)
-    {
-        if (!$workflows = $app['workflow.config']) {
-            return;
-        }
-
-        foreach ($workflows as $name => $workflow) {
-            $type = $workflow['type'];
-
-            if (!isset($workflow['transitions'][0])) {
-                foreach ((array) $workflow['transitions'] as $workflowName => $transition) {
-                    if (array_key_exists('name', $transition)) {
-                        continue;
-                    }
-
-                    $transition['name'] = $workflowName;
-                    $workflow['transitions'][$workflowName] = $transition;
-                }
-            }
-
-            $workflowId = $type.'.'.$name;
-            $definitionId = $workflowId.'.definition';
-            $markingStoreId = $workflowId.'.marking_store';
-
-            $app[$definitionId] = $this->createDefinition($workflow, $type);
-
-            if ($app['debug']) {
-                $this
-                    ->createValidator($type, isset($workflow['marking_store']['type']) ? $workflow['marking_store']['type'] : null)
-                    ->validate($app[$definitionId], $name);
-            }
-
-            $app[$markingStoreId] = $this->createMarkingStore($workflow);
-
-            $app[$workflowId] = function (Container $app) use ($name, $type, $definitionId, $markingStoreId) {
-                return call_user_func($app[sprintf('%s.factory', $type)], $app[$definitionId], $app[$markingStoreId], $name);
-            };
-
-            $app->extend('workflow.registry', function (Registry $registry, Container $app) use ($workflow, $workflowId) {
-                foreach ($workflow['supports'] as $supportedClass) {
-                    $registry->add($app[$workflowId], $supportedClass);
-                }
-
-                return $registry;
-            });
-        }
-    }
 
     /**
      * @param array $workflow
