@@ -93,10 +93,13 @@ class WorkflowServiceProvider implements ServiceProviderInterface
 		};
 
 		//add symfony twig extension
-		$app->extend('twig', function ($twig, $app) {
-			$twig->addExtension(new WorkflowExtension($app['workflow.registry']));
-			return $twig;
-		});
+        if(class_exists('Symfony\Bridge\Twig\Extension\WorkflowExtension')){
+            $app->extend('twig', function ($twig, $app) {
+                $twig->addExtension(new WorkflowExtension($app['workflow.registry']));
+                return $twig;
+            });
+        }
+
     }
 
 
